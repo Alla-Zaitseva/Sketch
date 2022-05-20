@@ -1,3 +1,4 @@
+from re import A
 import svgpathtools as svg
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
@@ -84,22 +85,42 @@ def draw_instructions(svg_file_input, output_dir):
     
 
     all_images = []
-    
+
+    elems_to_erase_arr = [0.3, 0.2, 0.15, 0.1, 0.05, 0.05]
+
     for i in range(1, 7):
+        elems_to_erase = math.ceil(elems_count * elems_to_erase_arr[i - 1])
+
         lens = []
         for path in paths:
             lens.append(path.length())
         lens = np.array(lens)
 
+        # TEST:
+        # Normalize lens
+        # from 1 to 10
+        # 
+        # min_len = np.min(lens)
+        # max_len = np.max(lens)
+        # lens = ((lens - min_len) / (max_len - min_len)) * 9.0 + 1.0
+
+        # TEST:
         # This is using exp equation
         # 
-        # alpha = 0.05
-        # lens = 1. / np.exp(alpha * lens)
+        alpha = 0.005
+        lens = 1. / np.exp(alpha * lens)
 
+        # TEST:
         # This is using linear equation
         # 
-        alpha = 0.5
-        lens = 1. / (alpha * lens)
+        # alpha = 0.005
+        # lens = 1. / (alpha * lens)
+
+        # TEST:
+        # This is using log equation
+        # 
+        # alpha = 0.05
+        # lens = 1. / np.log(alpha * lens)
 
         if np.sum(lens) == 0:
             break
